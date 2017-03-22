@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "140137666984",
+    "firebase_url": "https://vigour-aimt.firebaseio.com",
+    "project_id": "vigour-aimt",
+    "storage_bucket": "vigour-aimt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140137666984:android:c252f1965e5b850b",
+        "android_client_info": {
+          "package_name": "com.vishrut.fullscreensplash"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "140137666984-n578tuhstd8mrsf0rc7iss4l2ilf24tm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vishrut.fullscreensplash",
+            "certificate_hash": "d90f6d32a6d024fe5f6f6f549f7c7e4734177003"
+          }
+        },
+        {
+          "client_id": "140137666984-fnj15msns0mlib948crt92024pl3vfmp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChoWN7L965xyioe5UFAnTNYf65oO7ffik"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "140137666984-fnj15msns0mlib948crt92024pl3vfmp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

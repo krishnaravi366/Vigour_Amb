@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">Vigour</string>
+    <string name="splash_button">CLICK HERE TO CONTINUE</string>
+    <string name="signup_with_google">Sign up with Google</string>
+    <string name="facebook_app_id">663367913866062</string>
+
+    <string name="fb_login_protocol_scheme">fb663367913866062</string>
+    <string name="title_activity_main">Vigour</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- LoginActivity-->
+    <string name="login_error_message">Please make sure you enter a username and password!</string>
+    <string name="login_error_title">Checking</string>
+
+    <!-- SignupActivity-->
+    <string name="register_error_message">Please make sure you enter first name, email and password!</string>
+
+    <string name="firebase_profile">profile</string>
+
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyB7lM8wvcqPDhP_HyYumnCHQ5hYz07gfME</string>
+
+
+    <string name="details_alarm_name">Alarm Name</string>
+    <string name="details_repeat_weekly">Repeat Weekly</string>
+    <string name="details_sunday">Sunday</string>
+    <string name="details_monday">Monday</string>
+    <string name="details_tuesday">Tuesday</string>
+    <string name="details_wednesday">Wednesday</string>
+    <string name="details_thursday">Thursday</string>
+    <string name="details_friday">Friday</string>
+    <string name="details_saturday">Saturday</string>
+    <string name="details_alarm_tone">Alarm Tone</string>
+    <string name="details_alarm_tone_default">Select an alarm tone</string>
+
+    <string name="new_message_notification_title_template">New message: %1$s</string>
+
+    <!-- TODO: remove this placeholder text -->
+    <string name="new_message_notification_placeholder_text_template">You said %1$s and lorem ipsum
+        dolor sit amet, consectetur adipiscing elit. Etiam non enim magna. Morbi dictum, velit vel
+        semper venenatis, magna odio volutpat velit, at ullamcorper nulla lacus sed turpis.
+        Pellentesque vitae metus elit, nec tincidunt tellus. Integer sed nisl sem, ullamcorper
+        ornare lacus. Duis ac mauris sed massa congue volutpat. Donec sed erat sit amet turpis
+        viverra rhoncus sit amet nec magna. Donec lacinia ligula at libero volutpat volutpat nec nec
+        tortor.
+    </string>
+
+    <!-- -
+       This is an ad unit ID for a banner test ad. Replace with your own banner ad unit id.
+       For more information, see https://support.google.com/admob/answer/3052638
+   <!- -->
+    <string name="banner_ad_unit_id">ca-app-pub-7054645612060561/7523151133</string>
+
+    <!-- -
+        This is an ad unit ID for an interstitial test ad. Replace with your own interstitial ad unit id.
+        For more information, see https://support.google.com/admob/answer/3052638
+    <!- -->
+    <string name="interstitial_ad_unit_id">ca-app-pub-7054645612060561/8999884335</string>
+
+
+</resources>

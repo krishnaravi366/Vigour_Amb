@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#710096</color>
+    <color name="colorPrimaryDark">#570079</color>
+    <color name="colorAccent">#ff6940</color>
+    <color name="accent">#960f00</color>
+    <color name="black_overlay">#90362848</color>
+    <color name="bg_user_message">#ffffff</color>
+    <color name="divider">#b6b6b6</color>
+    <color name="text_color">#FFFFFF</color>
+    <color name="text_color_icon">#3d3535</color>
+
+
+</resources>

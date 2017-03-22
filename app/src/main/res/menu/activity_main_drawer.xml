@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_Activity"
+            android:icon="@drawable/activity"
+            android:title="Activity" />3
+        <item
+            android:id="@+id/nav_Profile"
+            android:icon="@drawable/profile"
+            android:title="Profile" />
+        <item
+            android:id="@+id/nav_Bmi"
+            android:icon="@drawable/bmi"
+            android:title="Bmi" />
+
+        <item
+            android:id="@+id/nav_History"
+            android:icon="@drawable/history"
+            android:title="History" />
+        <item
+            android:id="@+id/nav_Alarm"
+            android:icon="@drawable/alarm"
+            android:title="Alarm" />
+        <!--<item-->
+            <!--android:id="@+id/nav_Statistics"-->
+            <!--android:icon="@drawable/statistics"-->
+            <!--android:title="Statistics" />-->
+        <item
+            android:id="@+id/nav_Blog"
+            android:icon="@drawable/blog"
+            android:title="Motivation Blog" />
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_Chat"
+                android:icon="@drawable/chat"
+                android:title="Chat" />
+            <item
+                android:id="@+id/nav_Setting"
+                android:icon="@drawable/setting"
+                android:title="Setting" />
+            <item
+                android:id="@+id/nav_Feedback"
+                android:icon="@drawable/feedback"
+                android:title="Feedback" />
+            <item
+                android:id="@+id/nav_Signout"
+                android:icon="@drawable/signout"
+                android:title="Signout" />
+        </menu>
+    </item>
+
+</menu>

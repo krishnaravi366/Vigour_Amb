@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:weightSum="1"
+        android:padding="8dp"
+        android:background="@color/accent_material_light">
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView3"
+            android:src="@drawable/list"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="false"
+            android:layout_centerVertical="true"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Date"
+            android:id="@+id/resultDate"
+            android:textSize="10sp"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentEnd="false"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/imageView3"
+            android:padding="4dp"
+            android:background="@color/switch_thumb_normal_material_dark"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Time"
+            android:id="@+id/resultTime"
+            android:textSize="10sp"
+            android:layout_toRightOf="@+id/resultDate"
+            android:layout_centerVertical="true"
+            android:padding="4dp"
+            android:background="@color/switch_thumb_normal_material_dark"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Calorie"
+            android:id="@+id/resultCalorie"
+            android:layout_alignParentEnd="false"
+            android:layout_toRightOf="@+id/resultTime"
+            android:layout_centerVertical="true"
+            android:padding="4dp"
+            android:background="@color/switch_thumb_normal_material_dark"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:textSize="10sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Distance"
+            android:id="@+id/resultDistance"
+            android:layout_marginLeft="1dp"
+            android:layout_toRightOf="@+id/resultCalorie"
+            android:layout_alignParentEnd="false"
+            android:textSize="10sp"
+            android:layout_centerVertical="true"
+            android:padding="4dp"
+            android:background="@color/switch_thumb_normal_material_dark"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp" />
+
+    </RelativeLayout>
+
+</FrameLayout>

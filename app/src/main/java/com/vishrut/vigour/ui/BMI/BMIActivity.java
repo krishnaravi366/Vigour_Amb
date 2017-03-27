@@ -31,6 +31,11 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.suredigit.inappfeedback.FeedbackDialog;
 import com.suredigit.inappfeedback.FeedbackSettings;
 import com.vishrut.vigour.Chat.UserListActivity;
@@ -49,7 +54,7 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
     private TextView bmi;
     private TextView bmiCatagory;
     private TextView bmiNormal;
-    private Firebase mFirebaseRef;
+    private DatabaseReference mFirebaseRef;
     String Bmiweight;
     String Bmiheight;
 
@@ -99,7 +104,6 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
     private InterstitialAd mInterstitialAd;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +117,6 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
         mInterstitialAd = newInterstitialAd();
         loadInterstitial();
         showInterstitial();
-
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -142,7 +145,7 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
             navigationView.setNavigationItemSelectedListener(this);
         }
 
-        mFirebaseRef = new Firebase(getResources().getString(R.string.firebase_profile));
+        mFirebaseRef = FirebaseDatabase.getInstance().getReference(getResources().getString(R.string.firebase_profile));
 
         bmiHeight = (TextView) findViewById(R.id.bmi_detail_hieght);
         bmiWeight = (TextView) findViewById(R.id.bmi_detail_weight);
@@ -152,54 +155,40 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBarBmi);
         progressBar.setVisibility(View.VISIBLE);
 
-        final String userUid = mFirebaseRef.getAuth().getUid();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userUid = null;
+        if (currentUser != null) {
+            userUid = currentUser.getUid();
+        }
 
-        mFirebaseRef.addAuthStateListener(new Firebase.AuthStateListener() {
+        mFirebaseRef.child(userUid).addValueEventListener(new com.google.firebase.database.ValueEventListener() {
             @Override
-            public void onAuthStateChanged(final AuthData authData) {
+            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                Bmiweight = (String) dataSnapshot.child(ReferenceUrl.KEY_WEIGHT).getValue();
+                Bmiheight = (String) dataSnapshot.child(ReferenceUrl.KEY_HEIGHT).getValue();
+                bmiWeight.setText(Bmiweight);
+                bmiHeight.setText(Bmiheight);
+                String weight = bmiWeight.getText().toString();
+                String height = bmiHeight.getText().toString();
+                if (weight.length() > 0 && height.length() > 0) {
+                    calcBMI(weight, height);
 
-                //  progressBar.setVisibility(View.VISIBLE);
-//                mFirebaseRef.child(ReferenceUrl.CHILD_PROFILE).child(authData.getUid()).addValueEventListener(new ValueEventListener() {
-                mFirebaseRef.child(userUid).addValueEventListener(new ValueEventListener() {
-
-
-                    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Bmiweight = (String) dataSnapshot.child(ReferenceUrl.KEY_WEIGHT).getValue();
-                        Bmiheight = (String) dataSnapshot.child(ReferenceUrl.KEY_HEIGHT).getValue();
-                        bmiWeight.setText(Bmiweight);
-                        bmiHeight.setText(Bmiheight);
-                        String weight = bmiWeight.getText().toString();
-                        String height = bmiHeight.getText().toString();
-                        if (weight.length() > 0 && height.length() > 0) {
-                            calcBMI(weight, height);
-
-                            progressBar.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
 
 //                            if (progressBar != null) {
 //                                progressBar.setVisibility(View.GONE);
 //                            }
-                        }
+                }
+            }
 
-
-                    }
-
-
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(BMIActivity.this);
-                        builder.setMessage(firebaseError.getMessage()).setTitle("Error").setPositiveButton("OK", null);
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-
-                    }
-
-                });
-
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(BMIActivity.this);
+                builder.setMessage(databaseError.getMessage()).setTitle("Error").setPositiveButton("OK", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
-
         mAuthStateListener = new Firebase.AuthStateListener() {
             @Override
             public void onAuthStateChanged(AuthData authData) {
@@ -386,7 +375,7 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
         if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         } else {
-          }
+        }
     }
 
     private void loadInterstitial() {

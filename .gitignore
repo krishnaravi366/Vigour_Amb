@@ -3,3 +3,6 @@
 .idea/misc.xml
 .idea/workspace.xml
 local.properties
+build/
+.idea/
+.gradle/

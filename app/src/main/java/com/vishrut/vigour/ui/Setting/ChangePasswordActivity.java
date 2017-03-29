@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
@@ -53,7 +52,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         buttonChangePassword = (Button) findViewById(R.id.buttonChangePassword);
         progressBarChangePass = (ProgressBar) findViewById(R.id.progressBarChangePassword);
 
-        mFireBaseRef = new Firebase(ReferenceUrl.FIREBASE_CHAT_URL);
+        mFireBaseRef = new Firebase(ReferenceUrl.FIREBASE_DATABASE_URL);
 
         mAuthStateListener = new Firebase.AuthStateListener() {
             @Override

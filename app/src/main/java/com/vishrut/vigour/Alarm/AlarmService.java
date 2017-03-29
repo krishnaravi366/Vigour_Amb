@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import com.vishrut.vigour.NewMessageNotification;
+
 public class AlarmService extends Service {
 
 	public static String TAG = AlarmService.class.getSimpleName();
@@ -19,6 +21,7 @@ public class AlarmService extends Service {
 		Intent alarmIntent = new Intent(getBaseContext(), AlarmScreen.class);
 		alarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		alarmIntent.putExtras(intent);
+		NewMessageNotification.notify(this,"New Reminder",0);
 		getApplication().startActivity(alarmIntent);
 		
 		AlarmManagerHelper.setAlarms(this);

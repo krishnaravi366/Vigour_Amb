@@ -47,16 +47,14 @@ public class AlarmListActivity extends ListActivity {
 
 		// Create the InterstitialAd and set the adUnitId (defined in values/strings.xml).
 		mInterstitialAd = newInterstitialAd();
-		loadInterstitial();
 
-		showInterstitial();
 		mInterstitialAd.show();
 
 		mAdapter = new AlarmListAdapter(this, dbHelper.getAlarms());
 		
 		setListAdapter(mAdapter);
 
-		loadInterstitial();
+
 
 		fab = (FloatingActionButton) findViewById(R.id.fab);
 		fab.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +63,7 @@ public class AlarmListActivity extends ListActivity {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
 //				startActivity(new Intent(AlarmListActivity.this, AlarmDetailsActivity.class));
-				loadInterstitial();
+
 
 				mInterstitialAd.show();
 
@@ -166,21 +164,10 @@ public class AlarmListActivity extends ListActivity {
 		return interstitialAd;
 	}
 
-	private void loadInterstitial() {
-		AdRequest adRequest = new AdRequest.Builder()
-				.setRequestAgent("android_studio:ad_template").build();
-		mInterstitialAd.loadAd(adRequest);
-	}
 
-	private void showInterstitial() {
-		if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
-			mInterstitialAd.show();
-		} else {}
-	}
 
 	@Override
 	public void onBackPressed() {
-		showInterstitial();
 		super.onBackPressed();
 	}
 }

@@ -9,16 +9,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.vishrut.vigour.FireBase.ReferenceUrl;
+
 import com.vishrut.vigour.R;
 
 import java.text.DateFormat;
@@ -34,7 +34,6 @@ public class ResultActivity extends AppCompatActivity implements TextToSpeech.On
     private TextView resultTime;
     private TextView resultDistance;
     private TextView resultCalorie;
-    private FloatingActionButton fabshare;
     public static final String TIME = "O0HH 00MM 00SS";
     public static final String SPEED = "O M/S";
     public static final String DISTANCE = "O KM";
@@ -45,7 +44,6 @@ public class ResultActivity extends AppCompatActivity implements TextToSpeech.On
     private float shareCalorie;
     private String gotDistance;
     private String gotTime;
-    private String gotSpeed;
     private String gotCalorie;
     private DatabaseReference mFirebaseRef;
 
@@ -84,7 +82,7 @@ public class ResultActivity extends AppCompatActivity implements TextToSpeech.On
         and = (TextView) findViewById(R.id.result_and);
         resultCalorie = (TextView) findViewById(R.id.result_calorie);
 
-        fabshare = (FloatingActionButton) findViewById(R.id.fabshare);
+        FloatingActionButton fabshare = (FloatingActionButton) findViewById(R.id.fabshare);
 //        fabspeak = (FloatingActionButton) findViewById(R.id.fabspeak);
 
         mFirebaseRef =FirebaseDatabase.getInstance().getReference();
@@ -114,13 +112,13 @@ public class ResultActivity extends AppCompatActivity implements TextToSpeech.On
         final String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         CalorieData data=new CalorieData(gotDistance,gotTime,gotCalorie);
 
-        mFirebaseRef.child("CalorieBurn").child(userUid).push().setValue(data, new Firebase.CompletionListener() {
+        mFirebaseRef.child("CalorieBurn").child(userUid).push().setValue(data, new DatabaseReference.CompletionListener() {
             @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 mFirebaseRef.child("CalorieBurn").child(userUid).child(todayDateTimeString).child(localTime).child("Calorie Burn").setValue(gotCalorie);
                 mFirebaseRef.child("CalorieBurn").child(userUid).child(todayDateTimeString).child(localTime).child("Distance").setValue(gotDistance);
                 mFirebaseRef.child("CalorieBurn").child(userUid).child(todayDateTimeString).child(localTime).child("Time").setValue(gotTime);
+
             }
         });
 
@@ -157,7 +155,6 @@ public class ResultActivity extends AppCompatActivity implements TextToSpeech.On
 
             gotDistance = recievedDistance;
             gotTime = recievedTime;
-            gotSpeed = recievedSpeed;
             gotCalorie = recievedCalorie;
         }
 
@@ -228,13 +225,7 @@ public class ResultActivity extends AppCompatActivity implements TextToSpeech.On
         String speech= a+b+c+d+e+f+g+h;
 
         tts.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
-//        tts.speak(b, TextToSpeech.QUEUE_FLUSH, null);
-//        tts.speak(c, TextToSpeech.QUEUE_FLUSH, null);
-//        tts.speak(d, TextToSpeech.QUEUE_FLUSH, null);
-//        tts.speak(e, TextToSpeech.QUEUE_FLUSH, null);
-//        tts.speak(f, TextToSpeech.QUEUE_FLUSH, null);
-//        tts.speak(g, TextToSpeech.QUEUE_FLUSH, null);
-//        tts.speak(h, TextToSpeech.QUEUE_FLUSH, null);
+
     }
 
 

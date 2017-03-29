@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.List;
@@ -38,7 +39,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(Calendar.HOUR_OF_DAY, alarm.timeHour);
                     calendar.set(Calendar.MINUTE, alarm.timeMinute);
-                    calendar.set(Calendar.SECOND, 00);
+                    calendar.set(Calendar.SECOND, 0);
 
                     //Find next time to set
                     final int nowDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
@@ -74,6 +75,8 @@ public class AlarmManagerHelper extends BroadcastReceiver {
                     }
                 }
             }
+        }else{
+            Toast.makeText(context, "no alarm found", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -11,22 +11,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
-import com.vishrut.vigour.FireBase.ReferenceUrl;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.vishrut.vigour.R;
 
 import java.util.ArrayList;
 
 public class HistoryActivity extends AppCompatActivity {
 
-    private Firebase mFirebaseRef;
+    private DatabaseReference mFirebaseRef;
     private String userUid;
     private TextView result;
     public static final String TWEETS = "CalorieBurn";
@@ -34,7 +32,8 @@ public class HistoryActivity extends AppCompatActivity {
     private ArrayList resultArray;
     private ResultAdapter adapter;
     private ProgressBar progressBar;
-    private InterstitialAd mInterstitialAd;
+
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -42,19 +41,10 @@ public class HistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        AdView adView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .setRequestAgent("android_studio:ad_template").build();
-        adView.loadAd(adRequest);
 
-        mInterstitialAd = newInterstitialAd();
-        loadInterstitial();
-        showInterstitial();
-        mInterstitialAd.show();
-
-
-        mFirebaseRef = new Firebase(ReferenceUrl.FIREBASE_CHAT_URL);
-        userUid = mFirebaseRef.getAuth().getUid();
+        mFirebaseRef = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        userUid = mAuth.getCurrentUser().getUid();
         resultlv = (ListView) findViewById(R.id.lvHistory);
         progressBar = (ProgressBar) findViewById(R.id.progressBarHistory);
 //        ResultAdapter adapter=new ResultAdapter();
@@ -98,12 +88,11 @@ public class HistoryActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 resultlv.setAdapter(adapter);
 
-//                resultLists.add(child.getValue().toString());
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(HistoryActivity.this, "History failed to load", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -113,7 +102,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
 
-    class ResultAdapter extends BaseAdapter {
+    private class ResultAdapter extends BaseAdapter {
 
         private final ArrayList<ResultList> resultLists;
 
@@ -161,44 +150,5 @@ public class HistoryActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        showInterstitial();
-        super.onBackPressed();
-    }
-
-    private InterstitialAd newInterstitialAd() {
-        InterstitialAd interstitialAd = new InterstitialAd(this);
-        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-            }
-
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-            }
-
-            @Override
-            public void onAdClosed() {
-            }
-        });
-        return interstitialAd;
-    }
-
-    private void showInterstitial() {
-        // Show the ad if it's ready. Otherwise toast and reload the ad.
-        if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
-        } else {
-            }
-    }
-
-    private void loadInterstitial() {
-        // Disable the next level button and load the ad.
-        AdRequest adRequest = new AdRequest.Builder()
-                .setRequestAgent("android_studio:ad_template").build();
-        mInterstitialAd.loadAd(adRequest);
-    }
 
 }

@@ -22,16 +22,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.suredigit.inappfeedback.FeedbackDialog;
 import com.suredigit.inappfeedback.FeedbackSettings;
 import com.vishrut.vigour.Chat.UserListActivity;
@@ -66,8 +62,6 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
 
     private static final String TAG = UserListActivity.class.getSimpleName();
 
-    /* Listener for Firebase session changes */
-    private Firebase.AuthStateListener mAuthStateListener;
 
     /* recyclerView for mchat users */
     private RecyclerView mUsersFireChatRecyclerView;
@@ -95,8 +89,6 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
     private FloatingActionButton fab;
     private FeedbackDialog feedback;
 
-    /* Data from the authenticated user */
-    private AuthData mAuthData;
 
     /* Reference to firebase */
     private DatabaseReference mFirebaseChatRef;
@@ -105,7 +97,7 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
     private DatabaseReference mFireChatUsersRef;
 
     /* Updating connection status */
-    Firebase myConnectionsStatusRef;
+    DatabaseReference myConnectionsStatusRef;
     private FirebaseAuth mAuth;
 
 

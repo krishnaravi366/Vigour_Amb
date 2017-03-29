@@ -3,7 +3,7 @@ package com.vishrut.vigour.FireBase;
 
 public class ReferenceUrl {
 
-    public static final String FIREBASE_CHAT_URL="https://vigour-aimt.firebaseio.com/"; //Your app main firebase url
+
     public static final String CHILD_USERS="users";
     public static final String CHILD_PROFILE="profile";
     public static final String CHILD_CHAT="chat";

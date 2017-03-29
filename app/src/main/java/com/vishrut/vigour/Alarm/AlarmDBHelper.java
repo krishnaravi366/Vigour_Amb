@@ -12,7 +12,7 @@ import com.vishrut.vigour.Alarm.AlarmContract.Alarm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlarmDBHelper extends SQLiteOpenHelper {
+class AlarmDBHelper extends SQLiteOpenHelper {
 
 	public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "alarmclock.db";

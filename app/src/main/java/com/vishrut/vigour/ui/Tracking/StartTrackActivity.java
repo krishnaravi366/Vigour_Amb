@@ -41,10 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.Firebase;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -62,8 +58,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.suredigit.inappfeedback.FeedbackDialog;
 import com.suredigit.inappfeedback.FeedbackSettings;
 import com.vishrut.vigour.Alarm.AlarmListActivity;
@@ -87,6 +85,9 @@ import cn.hiroz.uninstallfeedback.FeedbackUtils;
 public class StartTrackActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     private static final int RC_FINE = 4788;
     private GoogleApiClient mGoogleApiClient;
@@ -137,8 +138,8 @@ public class StartTrackActivity extends AppCompatActivity
 
     /* Listener for Firebase session changes */
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    /* Data from the authenticated user */
-    private AuthData mAuthData;
+
+
     /* progress bar */
     private View mProgressBarForUsers;
     /* fire chat adapter */
@@ -173,7 +174,7 @@ public class StartTrackActivity extends AppCompatActivity
     private int total_seconds;
 
     private InterstitialAd mInterstitialAd;
-    private FirebaseAuth mAuth;
+
     private FirebaseDatabase mDbase;
 
 
@@ -423,7 +424,22 @@ public class StartTrackActivity extends AppCompatActivity
                 //  startStop.setText("Stop Activity");
             }
         });
-
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    mCurrentUserUid = user.getUid();
+                    // Get current user email
+                    mCurrentUserEmail = (String) user.getEmail();
+                } else {
+                    navigateToLogin();
+                }
+                // ...
+            }
+        };
+//
         loadInterstitial();
     }
 
@@ -455,11 +471,6 @@ public class StartTrackActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
 
     @Override
     public void onResume() {
@@ -486,14 +497,6 @@ public class StartTrackActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    protected void onStop() {
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-        super.onStop();
-//        stopLocationUpdates();
-    }
 
     @Override
     protected void onPause() {
@@ -605,20 +608,6 @@ public class StartTrackActivity extends AppCompatActivity
         return true;
     }
 
-    private void setAuthenticatedUser(AuthData authData) {
-        mAuthData = authData;
-        if (authData != null) {
-            /* User auth has not expire yet */
-            // Get unique current user ID
-            mCurrentUserUid = authData.getUid();
-            // Get current user email
-            mCurrentUserEmail = (String) authData.getProviderData().get(ReferenceUrl.KEY_EMAIL);
-        } else {
-            // Token expires or user log out
-            // So show logIn screen to reinitiate the token
-            navigateToLogin();
-        }
-    }
 
     private void navigateToLogin() {
 
@@ -842,12 +831,12 @@ public class StartTrackActivity extends AppCompatActivity
     }
 
     private void logout() {
-        if (this.mAuthData != null) {
+        if (mAuth != null) {
             /* Logout */
             // Finish token
             // mFirebaseChatRef.unauth();
             /* Update authenticated user and show login screen */
-            setAuthenticatedUser(null);
+            mAuth.signOut();
         }
     }
 
@@ -888,6 +877,7 @@ public class StartTrackActivity extends AppCompatActivity
             mInterstitialAd.show();
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == RC_FINE) {
@@ -911,6 +901,26 @@ public class StartTrackActivity extends AppCompatActivity
                 return;
             }
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onStop();
+        stopLocationUpdates();
     }
 }
 

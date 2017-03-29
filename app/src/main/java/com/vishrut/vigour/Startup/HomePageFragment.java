@@ -152,7 +152,7 @@ public class HomePageFragment extends Fragment implements
                 // Google Sign In failed, update UI appropriately
                 mGoogleLoginButton.setColorScheme(SignInButton.COLOR_DARK);
                 Toast.makeText(getActivity(), "Failed to login Using Google", Toast.LENGTH_SHORT).show();
-                
+
                 // ...
             }
         }

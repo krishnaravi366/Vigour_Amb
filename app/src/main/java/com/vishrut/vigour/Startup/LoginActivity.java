@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     // Log in
                     ProgressBar.setVisibility(View.VISIBLE);
-                    DatabaseReference authenticateUser = mDatabase.getReference(ReferenceUrl.FIREBASE_CHAT_URL); // Get app main firebase url
+                    DatabaseReference authenticateUser = mDatabase.getReference(); // Get app main firebase url
                     mAuth.signInWithEmailAndPassword(userName, passWord)
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override

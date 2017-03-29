@@ -2,7 +2,7 @@ package com.vishrut.vigour.Alarm;
 
 import android.provider.BaseColumns;
 
-public final class AlarmContract {
+class AlarmContract {
 	
 	public AlarmContract() {}
 	

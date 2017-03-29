@@ -9,10 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.vishrut.vigour.Chat.model.UsersChatModel;
 import com.vishrut.vigour.FireBase.ReferenceUrl;
 import com.vishrut.vigour.R;
@@ -43,7 +45,7 @@ public class ChatActivity extends Activity {
     private String mSenderUid;
 
     /* unique Firebase ref for this chat */
-    private Firebase mFirebaseMessagesChat;
+    private DatabaseReference mFirebaseMessagesChat;
 
     /* Listen to change in chat in firabase-remember to remove it */
     private ChildEventListener mMessageChatListener;
@@ -73,14 +75,14 @@ public class ChatActivity extends Activity {
         mChatRecyclerView.setHasFixedSize(true);
 
         // Initialize adapter
-        List<MessageChatModel>  emptyMessageChat=new ArrayList<MessageChatModel>();
+        List<MessageChatModel>  emptyMessageChat=new ArrayList<>();
         mMessageChatAdapter=new MessageChatAdapter(emptyMessageChat);
 
         // Set adapter to recyclerView
         mChatRecyclerView.setAdapter(mMessageChatAdapter);
 
         // Initialize firebase for this chat
-        mFirebaseMessagesChat=new Firebase(ReferenceUrl.FIREBASE_CHAT_URL).child(ReferenceUrl.CHILD_CHAT).child(usersDataModel.getChatRef());
+        mFirebaseMessagesChat=FirebaseDatabase.getInstance().getReference(ReferenceUrl.CHILD_CHAT).child(usersDataModel.getChatRef());
 
     }
 
@@ -102,9 +104,9 @@ public class ChatActivity extends Activity {
 
         Log.e(TAG, " I am onStart");
         mMessageChatListener=mFirebaseMessagesChat.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildKey) {
 
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if(dataSnapshot.exists()){
                     // Log.e(TAG, "A new chat was inserted");
 
@@ -117,7 +119,6 @@ public class ChatActivity extends Activity {
                     mMessageChatAdapter.refillAdapter(newMessage);
                     mChatRecyclerView.scrollToPosition(mMessageChatAdapter.getItemCount()-1);
                 }
-
             }
 
             @Override
@@ -136,7 +137,7 @@ public class ChatActivity extends Activity {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });

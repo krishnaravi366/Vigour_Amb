@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -12,14 +11,16 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.vishrut.vigour.FireBase.ReferenceUrl;
 import com.vishrut.vigour.R;
 
@@ -28,7 +29,9 @@ import java.util.ArrayList;
 public class BlogActivity extends AppCompatActivity {
 
     public static final String TWEETS = "post";
-    private Firebase firebase;
+    FirebaseAuth mAuth;
+    FirebaseDatabase mDatabase;
+    DatabaseReference reference;
     private ListView lvTweet;
     private ProgressBar bar;
     ArrayList<String> allTweets;
@@ -39,7 +42,8 @@ public class BlogActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blog_main);
-
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
         AdView adView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
                 .setRequestAgent("android_studio:ad_template").build();
@@ -50,14 +54,14 @@ public class BlogActivity extends AppCompatActivity {
         showInterstitial();
         mInterstitialAd.show();
 
-      //  Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //  Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         lvTweet = (ListView) findViewById(R.id.lvTweets);
         final EditText etTweet = (EditText) findViewById(R.id.etTweet);
         bar = (ProgressBar) findViewById(R.id.progressBar);
         //setSupportActionBar(toolbar);
-        firebase = new Firebase(ReferenceUrl.FIREBASE_CHAT_URL);
+        reference = mDatabase.getReference();
 
-//        firebase.getDefaultConfig().setPersistenceEnabled(true);
+//        reference.getDefaultConfig().setPersistenceEnabled(true);
 
 //        Firebase blogRef=new Firebase("https://vigourapp.firebaseio.com/post");
 //		blogRef.keepSynced(true);
@@ -80,7 +84,7 @@ public class BlogActivity extends AppCompatActivity {
         }
         final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, allTweets);
         lvTweet.setAdapter(adapter);
-        firebase.child(TWEETS).addValueEventListener(new ValueEventListener() {
+        reference.child(TWEETS).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 allTweets.clear();
@@ -90,29 +94,29 @@ public class BlogActivity extends AppCompatActivity {
                     allTweets.add(child.getValue().toString());
                 }
                 adapter.notifyDataSetChanged();
-
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Snackbar.make(lvTweet, firebaseError.getMessage(), Snackbar.LENGTH_LONG).show();
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
 
     private void updateFireBase(String tweet) {
         bar.setVisibility(View.VISIBLE);
-        Firebase tweets = firebase.child(TWEETS).push();
-        tweets.setValue(tweet, new Firebase.CompletionListener() {
+        DatabaseReference push = reference.child(TWEETS).push();
+        push.setValue(tweet, new DatabaseReference.CompletionListener() {
             @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError == null) {
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError == null) {
 //                    Toast.makeText(BlogActivity.this, "...", Toast.LENGTH_SHORT).show();
                 } else {
                 }
                 Toast.makeText(BlogActivity.this, "failed to tweet", Toast.LENGTH_SHORT).show();
 
                 bar.setVisibility(View.GONE);
+
             }
         });
     }
@@ -147,7 +151,7 @@ public class BlogActivity extends AppCompatActivity {
         if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         } else {
-         }
+        }
     }
 
     private void loadInterstitial() {

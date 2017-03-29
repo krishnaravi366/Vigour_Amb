@@ -664,8 +664,9 @@ public class StartTrackActivity extends AppCompatActivity
     }
 
     protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, (LocationListener) this
-        );
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
     }
 
     public void fetchAddressButtonHandler() {
@@ -918,9 +919,10 @@ public class StartTrackActivity extends AppCompatActivity
         }
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
+            stopLocationUpdates();
         }
         super.onStop();
-        stopLocationUpdates();
+
     }
 }
 

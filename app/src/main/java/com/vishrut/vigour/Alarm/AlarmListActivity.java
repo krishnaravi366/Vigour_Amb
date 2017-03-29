@@ -14,10 +14,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
 import com.vishrut.vigour.R;
 
 public class AlarmListActivity extends ListActivity {
@@ -26,7 +22,7 @@ public class AlarmListActivity extends ListActivity {
 	private AlarmDBHelper dbHelper = new AlarmDBHelper(this);
 	private Context mContext;
 	private FloatingActionButton fab;
-	private InterstitialAd mInterstitialAd;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,17 +34,6 @@ public class AlarmListActivity extends ListActivity {
 		
 		setContentView(R.layout.activity_alarm_list);
 
-		AdView adView = (AdView) findViewById(R.id.adView);
-		AdRequest adRequest = new AdRequest.Builder()
-				.setRequestAgent("android_studio:ad_template").build();
-		adView.loadAd(adRequest);
-
-
-
-		// Create the InterstitialAd and set the adUnitId (defined in values/strings.xml).
-		mInterstitialAd = newInterstitialAd();
-
-		mInterstitialAd.show();
 
 		mAdapter = new AlarmListAdapter(this, dbHelper.getAlarms());
 		
@@ -65,15 +50,13 @@ public class AlarmListActivity extends ListActivity {
 //				startActivity(new Intent(AlarmListActivity.this, AlarmDetailsActivity.class));
 
 
-				mInterstitialAd.show();
+
 
 				startAlarmDetailsActivity(-1);
 			}
 		});
 
-		if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
-			mInterstitialAd.show();
-		}
+
 	}
 
 	@Override
@@ -145,24 +128,6 @@ public class AlarmListActivity extends ListActivity {
 		}).show();
 	}
 
-	private InterstitialAd newInterstitialAd() {
-		InterstitialAd interstitialAd = new InterstitialAd(this);
-		interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
-		interstitialAd.setAdListener(new AdListener() {
-			@Override
-			public void onAdLoaded() {
-			}
-
-			@Override
-			public void onAdFailedToLoad(int errorCode) {
-			}
-
-			@Override
-			public void onAdClosed() {
-			}
-		});
-		return interstitialAd;
-	}
 
 
 

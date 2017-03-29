@@ -70,7 +70,7 @@ public class UserListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_list);
 
-
+        auth = FirebaseAuth.getInstance();
         // Initialize firebase
         mFirebaseChatRef = FirebaseDatabase.getInstance().getReference(); // Get app main firebase url
 
@@ -287,8 +287,6 @@ public class UserListActivity extends Activity {
     }
 
 
-
-
     /*Show and hide progress bar*/
     private void showProgressBarForUsers() {
         mProgressBarForUsers.setVisibility(View.VISIBLE);
@@ -305,7 +303,6 @@ public class UserListActivity extends Activity {
     public void onBackPressed() {
         super.onBackPressed();
     }
-
 
 
 }

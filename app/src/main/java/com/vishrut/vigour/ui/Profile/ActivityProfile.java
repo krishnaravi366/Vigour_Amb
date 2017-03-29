@@ -133,6 +133,11 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
 
         mFirebaseRef = FirebaseDatabase.getInstance().getReference(getResources().getString(R.string.firebase_profile));
         mAuth = FirebaseAuth.getInstance();
+        mCurrentUserUid = mAuth.getCurrentUser().getUid();
+
+        // Get current user email
+        mCurrentUserEmail = mAuth.getCurrentUser().getEmail();
+
         Firstname = (EditText) findViewById(R.id.result_ran);
         Lastname = (EditText) findViewById(R.id.lname);
         Age = (EditText) findViewById(R.id.age);
@@ -183,10 +188,9 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 } else {
-                    mFirebaseRef.child(ReferenceUrl.CHILD_PROFILE).child(userUid).push().setValue(data, new Firebase.CompletionListener() {
+                    mFirebaseRef.child(ReferenceUrl.CHILD_PROFILE).child(userUid).push().setValue(data, new DatabaseReference.CompletionListener() {
                         @Override
-                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                             mFirebaseRef.child(userUid).child("firstName").setValue(firstName);
                             mFirebaseRef.child(userUid).child("lastName").setValue(lastName);
                             mFirebaseRef.child(userUid).child("weight").setValue(weight);
@@ -245,12 +249,6 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
         feedbackSettings.setDeveloperMessage("This is a custom message that will only be seen by the developer!");
 
         feedback = new FeedbackDialog(this, "AF-7291A85FF651-8C", feedbackSettings);
-        mAuthStateListener = new Firebase.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(AuthData authData) {
-                setAuthenticatedUser(authData);
-            }
-        };
 
     }
 
@@ -287,25 +285,6 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
         return true;
     }
 
-    private void setAuthenticatedUser(AuthData authData) {
-        mAuthData = authData;
-        if (authData != null) {
-
-            /* User auth has not expire yet */
-
-            // Get unique current user ID
-            mCurrentUserUid = authData.getUid();
-
-            // Get current user email
-            mCurrentUserEmail = (String) authData.getProviderData().get(ReferenceUrl.KEY_EMAIL);
-
-
-        } else {
-            // Token expires or user log out
-            // So show logIn screen to reinitiate the token
-
-        }
-    }
 
     @Override
     public void onStart() {
@@ -315,7 +294,7 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
 
     private void logout() {
 
-        if (this.mAuthData != null) {
+        if (this.mAuth != null) {
 
             /* Logout of mChat */
 
@@ -326,7 +305,7 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
             FirebaseAuth.getInstance().signOut();
 
             /* Update authenticated user and show login screen */
-            setAuthenticatedUser(null);
+            mAuth.signOut();
         }
     }
 

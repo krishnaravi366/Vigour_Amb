@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -87,6 +88,7 @@ public class StartTrackActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    private static final int RC_FINE = 4788;
     private GoogleApiClient mGoogleApiClient;
     private FloatingActionButton fa;
     private Location mLastLocation;
@@ -169,7 +171,6 @@ public class StartTrackActivity extends AppCompatActivity
     private int minutes;
     private int seconds;
     private int total_seconds;
-    private Firebase mFirebase;
 
     private InterstitialAd mInterstitialAd;
     private FirebaseAuth mAuth;
@@ -182,7 +183,7 @@ public class StartTrackActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
-        mDbase =FirebaseDatabase.getInstance();
+        mDbase = FirebaseDatabase.getInstance();
 
 //        AdView adView = (AdView) findViewById(R.id.adView);
 //        AdRequest adRequest = new AdRequest.Builder()
@@ -245,34 +246,11 @@ public class StartTrackActivity extends AppCompatActivity
 
         FeedbackUtils.openUrlWhenUninstall(this, "https://www.facebook.com/Vigour-233131403713198/reviews/");
 
-        /*fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-               startActivity(new Intent(StartTrackActivity.this, UserListActivity.class));
-
-            }
-        });
-
-
-        FloatingActionButton fabhome = (FloatingActionButton) findViewById(R.id.fab_homepage);
-        fabhome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                startActivity(new Intent(StartTrackActivity.this,UserListActivity.class));
-            }
-        });*/
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -292,7 +270,7 @@ public class StartTrackActivity extends AppCompatActivity
         // Listen for changes in the authentication state
         // Because probably token expire after 24hrs or
         // user log out
-        mAuthStateListener =  new FirebaseAuth.AuthStateListener() {
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -504,7 +482,7 @@ public class StartTrackActivity extends AppCompatActivity
             //mFireChatUsersRef.removeEventListener(mListenerUsers);
         }
         if (mConnectedListener != null) {
-           // mFirebaseChatRef.getRoot().child(".info/connected").removeEventListener(mConnectedListener);
+            // mFirebaseChatRef.getRoot().child(".info/connected").removeEventListener(mConnectedListener);
         }
     }
 
@@ -535,7 +513,8 @@ public class StartTrackActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        this.map = googleMap;
+        map = googleMap;
+
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -543,22 +522,21 @@ public class StartTrackActivity extends AppCompatActivity
         });
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, RC_FINE);
+                return;
+            }
         }
         map.setMyLocationEnabled(true);    //for location
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        //Snackbar.make(fab, "connected to google play services", Snackbar.LENGTH_LONG).show();
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -610,9 +588,6 @@ public class StartTrackActivity extends AppCompatActivity
             startActivity(new Intent(StartTrackActivity.this, HistoryActivity.class));   // Handle the BMI action
         } else if (id == R.id.nav_Alarm) {
             startActivity(new Intent(StartTrackActivity.this, AlarmListActivity.class));   // Handle the BMI action
-
-//        } else if (id == R.id.nav_Statistics) {
-//            startActivity(new Intent(StartTrackActivity.this, StatisticsActivity.class));   // Handle the BMI action
         } else if (id == R.id.nav_Chat) {
             startActivity(new Intent(StartTrackActivity.this, UserListActivity.class));   // Handle the Chat action
         } else if (id == R.id.nav_Setting) {
@@ -717,10 +692,10 @@ public class StartTrackActivity extends AppCompatActivity
         startService(intent);
     }
 
-    class AddressResultReceiver extends ResultReceiver {
+    private class AddressResultReceiver extends ResultReceiver {
         private String mAddressOutput;
 
-        public AddressResultReceiver(Handler handler) {
+        AddressResultReceiver(Handler handler) {
             super(handler);
         }
 
@@ -784,7 +759,7 @@ public class StartTrackActivity extends AppCompatActivity
             @Override
             public void run() {
                 try {
-                    if (flag == false) {  //flag inside onCreate
+                    if (!flag) {  //flag inside onCreate
                         allStats = "LOCATION NOT AVAILABLE, PLEASE TURN ON THE GPS IF ITS OFF";
                     } else {
                         list = geocoder.getFromLocation(lat, lng, 1);
@@ -870,7 +845,7 @@ public class StartTrackActivity extends AppCompatActivity
         if (this.mAuthData != null) {
             /* Logout */
             // Finish token
-           // mFirebaseChatRef.unauth();
+            // mFirebaseChatRef.unauth();
             /* Update authenticated user and show login screen */
             setAuthenticatedUser(null);
         }
@@ -911,6 +886,30 @@ public class StartTrackActivity extends AppCompatActivity
         // Show the ad if it's ready. Otherwise toast and reload the ad.
         if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == RC_FINE) {
+            for (int result : grantResults) {
+                if (result == PackageManager.PERMISSION_DENIED) {
+                    askPermissions();
+                }
+            }
+
+        }
+
+    }
+
+    private void askPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, RC_FINE);
+                return;
+            }
         }
     }
 }

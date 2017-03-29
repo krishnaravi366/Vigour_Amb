@@ -15,6 +15,9 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.vishrut.vigour.FireBase.ReferenceUrl;
 import com.vishrut.vigour.R;
 
@@ -44,7 +47,7 @@ public class ResultActivity extends AppCompatActivity implements TextToSpeech.On
     private String gotTime;
     private String gotSpeed;
     private String gotCalorie;
-    private Firebase mFirebaseRef;
+    private DatabaseReference mFirebaseRef;
 
     private FloatingActionButton fabspeak;
 
@@ -84,7 +87,7 @@ public class ResultActivity extends AppCompatActivity implements TextToSpeech.On
         fabshare = (FloatingActionButton) findViewById(R.id.fabshare);
 //        fabspeak = (FloatingActionButton) findViewById(R.id.fabspeak);
 
-        mFirebaseRef = new Firebase(ReferenceUrl.FIREBASE_CHAT_URL);
+        mFirebaseRef =FirebaseDatabase.getInstance().getReference();
 
 
 
@@ -108,7 +111,7 @@ public class ResultActivity extends AppCompatActivity implements TextToSpeech.On
         date.setTimeZone(TimeZone.getTimeZone("GMT+5:30"));
         final String localTime = date.format(currentLocalTime);                       //For time
 
-        final String userUid = mFirebaseRef.getAuth().getUid();
+        final String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         CalorieData data=new CalorieData(gotDistance,gotTime,gotCalorie);
 
         mFirebaseRef.child("CalorieBurn").child(userUid).push().setValue(data, new Firebase.CompletionListener() {

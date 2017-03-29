@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessTokenTracker;
 import com.facebook.login.widget.LoginButton;
@@ -149,6 +150,9 @@ public class HomePageFragment extends Fragment implements
                 firebaseAuthWithGoogle(account);
             } else {
                 // Google Sign In failed, update UI appropriately
+                mGoogleLoginButton.setColorScheme(SignInButton.COLOR_DARK);
+                Toast.makeText(getActivity(), "Failed to login Using Google", Toast.LENGTH_SHORT).show();
+                
                 // ...
             }
         }

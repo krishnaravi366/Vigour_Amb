@@ -1,8 +1,6 @@
 package com.vishrut.vigour.ui.Tracking;
 
-/**
- * Created by Tony Stark on 4/27/2016.
- */
+
 public class CalorieData {
     public String gotDistance;
     public String gotTime;

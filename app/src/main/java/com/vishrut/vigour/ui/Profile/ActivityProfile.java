@@ -28,6 +28,10 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.suredigit.inappfeedback.FeedbackDialog;
 import com.suredigit.inappfeedback.FeedbackSettings;
 import com.vishrut.vigour.Chat.UserListActivity;
@@ -47,7 +51,7 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
     private EditText Weight;
     private EditText Height;
     private Button ProfileButton;
-    private Firebase mFirebaseRef;
+    private DatabaseReference mFirebaseRef;
     private String firstName;
     private String lastName;
     private String age;
@@ -95,13 +99,14 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
     private AuthData mAuthData;
 
     /* Reference to firebase */
-    private Firebase mFirebaseChatRef;
+    private DatabaseReference mFirebaseChatRef;
 
     /* Reference to users in firebase */
-    private Firebase mFireChatUsersRef;
+    private DatabaseReference mFireChatUsersRef;
 
     /* Updating connection status */
     Firebase myConnectionsStatusRef;
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -134,7 +139,8 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
         }
 
 
-        mFirebaseRef = new Firebase(getResources().getString(R.string.firebase_profile));
+        mFirebaseRef = FirebaseDatabase.getInstance().getReference(getResources().getString(R.string.firebase_profile));
+        mAuth = FirebaseAuth.getInstance();
         Firstname = (EditText) findViewById(R.id.result_ran);
         Lastname = (EditText) findViewById(R.id.lname);
         Age = (EditText) findViewById(R.id.age);
@@ -144,50 +150,29 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBarProfile);
         progressBar.setVisibility(View.VISIBLE);
 
-        final String userUid = mFirebaseRef.getAuth().getUid();
+        final String userUid = mAuth.getCurrentUser().getUid();
 
 
-        mFirebaseRef.child(userUid).addValueEventListener(new ValueEventListener() {
-            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+        mFirebaseRef.child(userUid).addValueEventListener(new com.google.firebase.database.ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                firstName   = (String) dataSnapshot.child(ReferenceUrl.KEY_NAME)        .getValue();
-                lastName    = (String) dataSnapshot.child(ReferenceUrl.KEY_LAST_NAME)   .getValue();
-                age         = (String) dataSnapshot.child(ReferenceUrl.KEY_AGE)         .getValue();
-                weight      = (String) dataSnapshot.child(ReferenceUrl.KEY_WEIGHT)      .getValue();
-                height      = (String) dataSnapshot.child(ReferenceUrl.KEY_HEIGHT)      .getValue();
+            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                firstName = (String) dataSnapshot.child(ReferenceUrl.KEY_NAME).getValue();
+                lastName = (String) dataSnapshot.child(ReferenceUrl.KEY_LAST_NAME).getValue();
+                age = (String) dataSnapshot.child(ReferenceUrl.KEY_AGE).getValue();
+                weight = (String) dataSnapshot.child(ReferenceUrl.KEY_WEIGHT).getValue();
+                height = (String) dataSnapshot.child(ReferenceUrl.KEY_HEIGHT).getValue();
                 Firstname.setText(firstName);
                 Lastname.setText(lastName);
                 Age.setText(age);
                 Weight.setText(weight);
                 Height.setText(height);
                 progressBar.setVisibility(View.GONE);
-
             }
-//        mFirebaseRef.child(userUid).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot snapshot) {
-//
-//                firstName =DataSnapshot.child(ReferenceUrl.KEY_NAME).getValue();
-////                lastName = (String) DataSnapshot.child(ReferenceUrl.KEY_LAST_NAME).getValue();
-////                age = (String) DataSnapshot.child(ReferenceUrl.KEY_AGE).getValue();
-////                weight = (String) DataSnapshot.child(ReferenceUrl.KEY_WEIGHT).getValue();
-////                height = (String) DataSnapshot.child(ReferenceUrl.KEY_HEIGHT).getValue();
-////                Firstname.setText(firstName);
-////                Lastname.setText(lastName);
-////                Age.setText(age);
-////                Weight.setText(weight);
-////                Height.setText(height);
-//                progressBar.setVisibility(View.GONE);
-//
-//            }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
-
-
         });
 
 
@@ -199,7 +184,7 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
                 age = Age.getText().toString().trim();
                 weight = Weight.getText().toString().trim();
                 height = Height.getText().toString().trim();
-                ProfileData data=new ProfileData(gotFirstName,gotLastName,gotAge, gotHeight,gotWeight);
+                ProfileData data = new ProfileData(gotFirstName, gotLastName, gotAge, gotHeight, gotWeight);
                 if (firstName.length() == 0 || lastName.length() == 0 || age.length() == 0 || weight.length() == 0 || height.length() == 0) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(ActivityProfile.this);
                     builder.setMessage("Please fill all the data").setTitle("Error").setPositiveButton("OK", null);
@@ -346,7 +331,7 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
             myConnectionsStatusRef.setValue(ReferenceUrl.KEY_OFFLINE);
 
             // Finish token
-            mFirebaseChatRef.unauth();
+            FirebaseAuth.getInstance().signOut();
 
             /* Update authenticated user and show login screen */
             setAuthenticatedUser(null);

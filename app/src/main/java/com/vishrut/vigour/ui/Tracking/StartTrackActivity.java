@@ -65,12 +65,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.suredigit.inappfeedback.FeedbackDialog;
 import com.suredigit.inappfeedback.FeedbackSettings;
 import com.vishrut.vigour.Alarm.AlarmListActivity;
-import com.vishrut.vigour.Chat.UserListActivity;
-import com.vishrut.vigour.Chat.adapter.UsersChatAdapter;
+
 import com.vishrut.vigour.FireBase.ReferenceUrl;
 import com.vishrut.vigour.R;
 import com.vishrut.vigour.Service.FetchAddressIntentService;
 import com.vishrut.vigour.ViewPager.ViewPagerActivity;
+import com.vishrut.vigour.chatApp.MainActivity;
 import com.vishrut.vigour.ui.BMI.BMIActivity;
 import com.vishrut.vigour.ui.History.HistoryActivity;
 import com.vishrut.vigour.ui.MotivationBlog.BlogActivity;
@@ -130,7 +130,7 @@ public class StartTrackActivity extends AppCompatActivity
     ToggleButton startStop;
     Intent intent;
     ShareActionProvider shareActionProvider;
-    private static final String TAG = UserListActivity.class.getSimpleName();
+    private static final String TAG = StartTrackActivity.class.getSimpleName();
     /* Reference to firebase */
     private DatabaseReference mFirebaseChatRef;
     /* Reference to users in firebase */
@@ -143,7 +143,7 @@ public class StartTrackActivity extends AppCompatActivity
     /* progress bar */
     private View mProgressBarForUsers;
     /* fire chat adapter */
-    private UsersChatAdapter mUsersChatAdapter;
+
     /* current user uid */
     private String mCurrentUserUid;
     /* current user email */
@@ -592,7 +592,7 @@ public class StartTrackActivity extends AppCompatActivity
         } else if (id == R.id.nav_Alarm) {
             startActivity(new Intent(StartTrackActivity.this, AlarmListActivity.class));   // Handle the BMI action
         } else if (id == R.id.nav_Chat) {
-            startActivity(new Intent(StartTrackActivity.this, UserListActivity.class));   // Handle the Chat action
+            startActivity(new Intent(StartTrackActivity.this, MainActivity.class));   // Handle the Chat action
         } else if (id == R.id.nav_Setting) {
             startActivity(new Intent(StartTrackActivity.this, SettingActivity.class));   // Handle the Setting action
         } else if (id == R.id.nav_Feedback) {

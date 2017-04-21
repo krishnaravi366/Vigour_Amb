@@ -30,10 +30,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.suredigit.inappfeedback.FeedbackDialog;
 import com.suredigit.inappfeedback.FeedbackSettings;
-import com.vishrut.vigour.Chat.UserListActivity;
-import com.vishrut.vigour.Chat.adapter.UsersChatAdapter;
+
 import com.vishrut.vigour.FireBase.ReferenceUrl;
 import com.vishrut.vigour.R;
+import com.vishrut.vigour.chatApp.MainActivity;
 import com.vishrut.vigour.ui.BMI.BMIActivity;
 import com.vishrut.vigour.ui.Tracking.StartTrackActivity;
 
@@ -60,7 +60,7 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
     public String gotWeight;
 
 
-    private static final String TAG = UserListActivity.class.getSimpleName();
+    private static final String TAG = ActivityProfile.class.getSimpleName();
 
 
     /* recyclerView for mchat users */
@@ -69,8 +69,7 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
     /* progress bar */
     private View mProgressBarForUsers;
 
-    /* fire chat adapter */
-    private UsersChatAdapter mUsersChatAdapter;
+
 
     /* current user uid */
     private String mCurrentUserUid;
@@ -267,7 +266,7 @@ public class ActivityProfile extends AppCompatActivity implements NavigationView
 //        } else if (id == R.id.nav_Statistics) {
 
         } else if (id == R.id.nav_Chat) {
-            startActivity(new Intent(ActivityProfile.this, UserListActivity.class));   // Handle the Chat action
+            startActivity(new Intent(ActivityProfile.this, MainActivity.class));   // Handle the Chat action
         } else if (id == R.id.nav_Setting) {
 
         } else if (id == R.id.nav_Feedback) {

@@ -36,7 +36,6 @@
 
     <string name="new_message_notification_title_template">New message: %1$s</string>
 
-    <!-- TODO: remove this placeholder text -->
     <string name="new_message_notification_placeholder_text_template">You said %1$s and lorem ipsum
         dolor sit amet, consectetur adipiscing elit. Etiam non enim magna. Morbi dictum, velit vel
         semper venenatis, magna odio volutpat velit, at ullamcorper nulla lacus sed turpis.
@@ -59,5 +58,10 @@
     <string name="interstitial_ad_unit_id">ca-app-pub-7054645612060561/8999884335</string>
     <string name="auth_failed">Failed to register ! sorry</string>
 
-
+    <string name="sendPhoto">Photo Camera</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="select_picture_title">Get Photo From</string>
+    <string name="sendPhotoGallery">Photo Gallery</string>
+    <string name="sendLocation">Send Location</string>
+    <string name="locationTo">Location to</string>
 </resources>

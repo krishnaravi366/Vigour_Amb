@@ -1,8 +1,8 @@
 package com.vishrut.vigour.ui.BMI;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -10,9 +10,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,16 +21,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
@@ -38,10 +33,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.suredigit.inappfeedback.FeedbackDialog;
 import com.suredigit.inappfeedback.FeedbackSettings;
-import com.vishrut.vigour.Chat.UserListActivity;
-import com.vishrut.vigour.Chat.adapter.UsersChatAdapter;
 import com.vishrut.vigour.FireBase.ReferenceUrl;
 import com.vishrut.vigour.R;
+import com.vishrut.vigour.Startup.LoginActivity;
+import com.vishrut.vigour.chatApp.MainActivity;
 import com.vishrut.vigour.ui.Profile.ActivityProfile;
 import com.vishrut.vigour.ui.Tracking.StartTrackActivity;
 
@@ -59,22 +54,10 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
     String Bmiheight;
 
 
-    private static final String TAG = UserListActivity.class.getSimpleName();
+    private static final String TAG = BMIActivity.class.getSimpleName();
 
-    /* Reference to firebase */
-    private Firebase mFirebaseChatRef;
 
-    /* Reference to users in firebase */
-    private Firebase mFireChatUsersRef;
-
-    /* Updating connection status */
-    Firebase myConnectionsStatusRef;
-
-    /* Listener for Firebase session changes */
-    private Firebase.AuthStateListener mAuthStateListener;
-
-    /* Data from the authenticated user */
-    private AuthData mAuthData;
+    private FirebaseAuth mAuth;
 
     /* recyclerView for mchat users */
     private RecyclerView mUsersFireChatRecyclerView;
@@ -82,8 +65,6 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
     /* progress bar */
     private View mProgressBarForUsers;
 
-    /* fire chat adapter */
-    private UsersChatAdapter mUsersChatAdapter;
 
     /* current user uid */
     private String mCurrentUserUid;
@@ -91,17 +72,13 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
     /* current user email */
     private String mCurrentUserEmail;
 
-    /* Listen to users change in firebase-remember to detach it */
-    private ChildEventListener mListenerUsers;
-
-    /* Listen for user presence */
-    private ValueEventListener mConnectedListener;
 
     /* List holding user key */
     private List<String> mUsersKeyList;
     private FloatingActionButton fab;
     private FeedbackDialog feedback;
     private InterstitialAd mInterstitialAd;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
 
     @Override
@@ -109,6 +86,22 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bmi);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    mCurrentUserEmail = user.getEmail();
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+                // ...
+            }
+        };
         AdView adView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
                 .setRequestAgent("android_studio:ad_template").build();
@@ -189,12 +182,6 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
                 dialog.show();
             }
         });
-        mAuthStateListener = new Firebase.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(AuthData authData) {
-                setAuthenticatedUser(authData);
-            }
-        };
 
 
         FeedbackSettings feedbackSettings = new FeedbackSettings();
@@ -290,7 +277,7 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
 //        } else if (id == R.id.nav_Statistics) {
 
         } else if (id == R.id.nav_Chat) {
-            startActivity(new Intent(BMIActivity.this, UserListActivity.class));   // Handle the Chat action
+            startActivity(new Intent(BMIActivity.this, MainActivity.class));   // Handle the Chat action
         } else if (id == R.id.nav_Setting) {
 
         } else if (id == R.id.nav_Feedback) {
@@ -298,7 +285,10 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
             feedback.show();
 
         } else if (id == R.id.nav_Signout) {
-            logout();
+            mAuth.signOut();
+
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -307,41 +297,17 @@ public class BMIActivity extends AppCompatActivity implements NavigationView.OnN
         }
         return true;
     }
-
-    private void setAuthenticatedUser(AuthData authData) {
-        mAuthData = authData;
-        if (authData != null) {
-
-            /* User auth has not expire yet */
-
-            // Get unique current user ID
-            mCurrentUserUid = authData.getUid();
-
-            // Get current user email
-            mCurrentUserEmail = (String) authData.getProviderData().get(ReferenceUrl.KEY_EMAIL);
-
-
-        } else {
-            // Token expires or user log out
-            // So show logIn screen to reinitiate the token
-
-        }
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
-    private void logout() {
-
-        if (this.mAuthData != null) {
-
-            /* Logout of mChat */
-
-            // Store current user status as offline
-            myConnectionsStatusRef.setValue(ReferenceUrl.KEY_OFFLINE);
-
-            // Finish token
-            mFirebaseChatRef.unauth();
-
-            /* Update authenticated user and show login screen */
-            setAuthenticatedUser(null);
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
         }
     }
 
